@@ -110,3 +110,8 @@ export async function setUserState(id: number, state: UserState) {
   try { await store.collection("users").doc(id.toString()).set({ state }, { merge: true }) }
   catch(err) { console.error("Error while updating user state", err) }
 }
+
+export async function removeUser(id: number) {
+  try { await store.collection("users").doc(id.toString()).delete() }
+  catch(err) { console.error("Error while deleting user: ", err) }
+}

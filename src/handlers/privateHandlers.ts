@@ -12,6 +12,11 @@ const serverProblemMessage = (chatId: number) =>
 const unknownMessage = (chatId: number) =>
   sendMessage({ text: texts.unknown, chatId, removeKeyboard: false })
 
+export async function handlePrivateUpdate(update: Update.MyChatMemberUpdate) {
+  if(update.my_chat_member.new_chat_member.status === "kicked")
+    await db.removeUser(update.my_chat_member.from.id)
+}
+
 export async function handlePrivateMessage(update: Update.MessageUpdate) {
   const { message } = update
   const { chat, from : teleUser } = message
@@ -24,6 +29,7 @@ export async function handlePrivateMessage(update: Update.MessageUpdate) {
   }
   if(user === null) { // user does not exist
     sendMessage({ text: texts.welcome, keyboard: keyboards.default })
+      .catch(err => console.error(err))
     const { first_name: firstName, last_name: lastName, id: userId, username } = teleUser
     await db.createUser({ firstName, lastName, userId, username, state: {name: "default", data: {}} })
     return

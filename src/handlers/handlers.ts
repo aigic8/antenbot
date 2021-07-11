@@ -1,7 +1,7 @@
 import { Update } from 'typegram'
 import { handleChannelUpdate } from './channelHandlers'
 import { handleGroupUpdate, handleGroupMessage } from './groupHandlers'
-import { handlePrivateMessage } from './privateHandlers'
+import { handlePrivateMessage, handlePrivateUpdate } from './privateHandlers'
 
 export default function onUpdate(update: Update) {
   if("my_chat_member" in update) {
@@ -9,6 +9,8 @@ export default function onUpdate(update: Update) {
       handleGroupUpdate(update)
     else if(update.my_chat_member.chat.type === "channel")
       handleChannelUpdate(update)
+    else if(update.my_chat_member.chat.type === "private")
+      handlePrivateUpdate(update)
     return
   }
 

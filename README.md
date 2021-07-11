@@ -10,7 +10,11 @@ Things you need to get started:
 - `ngrok` is not required but recommended
 
 ## Commands
-- `start`: create development server using `nodemon` and `ts-loader`
+- `start`: runs `src/index.ts`
+- `startjs`: runs js file `dist\index.js`
+- `serve`: starts a development server using `nodemon` and `ts-loader`
+- `setWebhook`: sets telegram webhook to url
+- `deleteWebhook`: deletes telegram webhook
 - `build`: build files into `dist` directory.
 
 ## Scripts

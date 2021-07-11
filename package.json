@@ -1,10 +1,14 @@
 {
   "name": "antenbot",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon ./src/index.ts",
+    "start": "ts-node src/index.ts",
+    "serve": "nodemon src/start.ts",
+    "startjs": "node dist/index.js",
+    "setWebhook": "ts-node scripts/start.ts",
+    "deleteWebhook": "ts-node scripts/stop.ts",
     "build": "tsc"
   },
   "devDependencies": {

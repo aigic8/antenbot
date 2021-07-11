@@ -5,7 +5,7 @@ import { handlePrivateMessage } from './privateHandlers'
 
 export default function onUpdate(update: Update) {
   if("my_chat_member" in update) {
-    if(update.my_chat_member.chat.type === "group")
+    if(update.my_chat_member.chat.type === "group" || update.my_chat_member.chat.type === "supergroup")
       handleGroupUpdate(update)
     else if(update.my_chat_member.chat.type === "channel")
       handleChannelUpdate(update)

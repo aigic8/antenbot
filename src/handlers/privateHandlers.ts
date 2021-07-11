@@ -54,12 +54,12 @@ export async function handlePrivateMessage(update: Update.MessageUpdate) {
 
 
 async function handleDefaultState(message: NewPrivateMessage, user: User) {
-  if(message.text === "اضافه کردن گروه جدید") {
+  if(message.text === texts.keyAddNewGroup) {
     const keyboard = await makeUserGroupsKeyboard(user.userId)
     if(!keyboard)
       serverProblemMessage(message.chat.id)
     else {
-      keyboard.push(["بارگذاری دوباره"])
+      keyboard.push([texts.keyReload])
       sendMessage({text: texts.chooseGroupName, chatId: message.chat.id, keyboard })
       await db.setUserState(message.from.id, {name: "addingGroup-sendingGroupName", data: {}})
     }
@@ -69,12 +69,12 @@ async function handleDefaultState(message: NewPrivateMessage, user: User) {
 }
 
 async function handleAGSendingGroupName(message: NewPrivateMessage, user: User) {
-  if(message.text === "بارگذاری دوباره") {
+  if(message.text === texts.keyReload) {
     const keyboard = await makeUserGroupsKeyboard(user.userId)
     if(!keyboard)
       serverProblemMessage(message.chat.id)
     else {
-      keyboard.push(["بارگذاری دوباره"])
+      keyboard.push([texts.keyReload])
       sendMessage({text: texts.chooseGroupName, chatId: message.chat.id, keyboard })
     }
     return
@@ -93,7 +93,7 @@ async function handleAGSendingGroupName(message: NewPrivateMessage, user: User) 
     if(!keyboard)
       serverProblemMessage(message.chat.id)
     else {
-      keyboard.push(["بارگذاری دوباره"])
+      keyboard.push([texts.keyReload])
       sendMessage({ text: texts.chooseChannelName, chatId: message.chat.id, keyboard })
       await db.setUserState(user.userId, { name: "addingGroup-sendingChannelName", data: { choosenGroup: group.chatId } })
     }
@@ -102,12 +102,12 @@ async function handleAGSendingGroupName(message: NewPrivateMessage, user: User) 
 }
 
 async function handleAGSendingChannelName(message: NewPrivateMessage, user: User ) {
-  if(message.text === "بارگذاری دوباره") {
+  if(message.text === texts.keyReload) {
     const keyboard = await makeUserChannelsKeyboard(user.userId)
     if(!keyboard)
       serverProblemMessage(message.chat.id)
     else {
-      keyboard.push(["بارگذاری دوباره"])
+      keyboard.push([texts.keyReload])
       sendMessage({ text: texts.chooseChannelName, chatId: message.chat.id, keyboard })
     }
     return

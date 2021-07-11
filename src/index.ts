@@ -1,9 +1,10 @@
-import dotenv from 'dotenv'
+require("dotenv").config()
 import { checkEnv } from './helpers'
-dotenv.config(); checkEnv()
 import express from 'express'
 import { Update } from 'typegram'
 import onUpdate from './handlers/handlers'
+
+checkEnv()
 
 const DEFAULT_PORT = "3000"
 const PORT = parseInt(process.env.PORT || DEFAULT_PORT)
@@ -17,7 +18,8 @@ app.get("/", (_req, res) => {
 
 const BOT_PATH = "/bot" + process.env.BOT_TOKEN as string
 app.post(BOT_PATH, (req, res) => {
-  onUpdate(req.body as Update)
+  try { onUpdate(req.body as Update) }
+  catch(err) { console.error("ERROR ON UPDATE: ", err) }
   res.end("")
 })
 

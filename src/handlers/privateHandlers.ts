@@ -59,7 +59,7 @@ async function handleDefaultState(message: NewPrivateMessage, user: User) {
     if(!keyboard)
       serverProblemMessage(message.chat.id)
     else {
-      keyboard.push([texts.keyReload])
+      keyboard.push(keyboards.staticKeys)
       sendMessage({text: texts.chooseGroupName, chatId: message.chat.id, keyboard })
       await db.setUserState(message.from.id, {name: "addingGroup-sendingGroupName", data: {}})
     }
@@ -74,9 +74,13 @@ async function handleAGSendingGroupName(message: NewPrivateMessage, user: User) 
     if(!keyboard)
       serverProblemMessage(message.chat.id)
     else {
-      keyboard.push([texts.keyReload])
+      keyboard.push(keyboards.staticKeys)
       sendMessage({text: texts.chooseGroupName, chatId: message.chat.id, keyboard })
     }
+    return
+  }
+  if(message.text === texts.keyExit || message.text == texts.keyBack) {
+    await exitAction(message.chat.id, user.userId)
     return
   }
   const group = await db.findGroupWithTitle(message.text)
@@ -93,7 +97,7 @@ async function handleAGSendingGroupName(message: NewPrivateMessage, user: User) 
     if(!keyboard)
       serverProblemMessage(message.chat.id)
     else {
-      keyboard.push([texts.keyReload])
+      keyboard.push(keyboards.staticKeys)
       sendMessage({ text: texts.chooseChannelName, chatId: message.chat.id, keyboard })
       await db.setUserState(user.userId, { name: "addingGroup-sendingChannelName", data: { choosenGroup: group.chatId } })
     }
@@ -107,9 +111,26 @@ async function handleAGSendingChannelName(message: NewPrivateMessage, user: User
     if(!keyboard)
       serverProblemMessage(message.chat.id)
     else {
-      keyboard.push([texts.keyReload])
+      keyboard.push(keyboards.staticKeys)
       sendMessage({ text: texts.chooseChannelName, chatId: message.chat.id, keyboard })
     }
+    return
+  }
+
+  if(message.text === texts.keyBack) {
+    const keyboard = await makeUserGroupsKeyboard(user.userId)
+    if(!keyboard)
+      serverProblemMessage(message.chat.id)
+    else {
+      keyboard.push(keyboards.staticKeys)
+      sendMessage({text: texts.chooseGroupName, chatId: message.chat.id, keyboard })
+      await db.setUserState(user.userId, { name: "addingGroup-sendingGroupName", data: {} })
+    }
+    return
+  }
+
+  if(message.text === texts.keyExit) {
+    await exitAction(message.chat.id, user.userId)
     return
   }
 
@@ -119,7 +140,7 @@ async function handleAGSendingChannelName(message: NewPrivateMessage, user: User
   else if(channel === null)
     unknownMessage(message.chat.id)
   else {
-    sendMessage({ text: texts.chooseHashtags, chatId: message.chat.id })
+    sendMessage({ text: texts.chooseHashtags, chatId: message.chat.id, keyboard: keyboards.hashtag })
     const state = user.state as UserState.AGSendingChannelName
     await db.setUserState(user.userId, { name: "addingGroup-sendingHashtags", data: { 
       choosenGroup: state.data.choosenGroup,
@@ -130,6 +151,25 @@ async function handleAGSendingChannelName(message: NewPrivateMessage, user: User
 }
 
 async function handleAGSendingHashtags(message: NewPrivateMessage, user: User) {
+  if(message.text === texts.keyBack) {
+    const keyboard = await makeUserChannelsKeyboard(user.userId)
+    if(!keyboard)
+      serverProblemMessage(message.chat.id)
+    else {
+      keyboard.push(keyboards.staticKeys)
+      sendMessage({ text: texts.chooseChannelName, chatId: message.chat.id, keyboard })
+      const state = user.state as UserState.AGSendingHashtags
+      const choosenGroup = state.data.choosenGroup
+      await db.setUserState(user.userId, { name: "addingGroup-sendingChannelName", data: { choosenGroup } })
+    }
+    return
+  }
+
+  if(message.text === texts.keyExit) {
+    await exitAction(message.chat.id, user.userId)
+    return
+  }
+
   const hashtags = findHashtags(message.text)
   const state = user.state as UserState.AGSendingHashtags
   const { choosenGroup, choosenChannel } = state.data
@@ -158,4 +198,9 @@ async function makeUserChannelsKeyboard(userId: number) {
     .map(channel => channel.chatId)
   const keys = channels.filter(channel => userChannelIds.includes(channel.chatId)).map(channel => channel.title)
   return makeKeyboard(keys)
+}
+
+async function exitAction(chatId: number, userId: number) {
+  sendMessage({ text: texts.OK, chatId, keyboard: keyboards.default })
+  await db.setUserState(userId, { name: "default", data: {} })
 }

@@ -16,12 +16,17 @@ export const texts = {
   atLeastAHashtag: "در پیام فرستاده شده هشتگی وجود نداشت. حداقل یک هشتگ باید فرستاده شود.",
   successfulOperation: "کار با موفقیت انجام شد.✌",
   mustBeInGroup: "برای اضافه کردن گروه شما باید در آن حضور داشته باشید.🧐",
+  OK: "به روی چشم",
 
   keyAddNewGroup: "اضافه کردن گروه جدید",
-  keyReload: "بارگذاری دوباره"
+  keyReload: "بارگذاری دوباره",
+  keyBack: "بازگشت",
+  keyExit: "خروج"
 }
 
 
 export const keyboards = {
-  default: [[texts.keyAddNewGroup]]
+  default: [[texts.keyAddNewGroup]],
+  staticKeys: [texts.keyReload, texts.keyBack, texts.keyExit],
+  hashtag: [[texts.keyBack, texts.keyExit]]
 }
